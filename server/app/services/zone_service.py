@@ -111,17 +111,36 @@ def export_geojson(property_id):
 
 def property_summary(property_id):
 
-    zones=Zone.query.filter_by(property_id=property_id).all()
+    zones = Zone.query.filter_by(property_id=property_id).all()
+
+    total_zones = len(zones)
+
+    total_mowers = sum(z.mower_count for z in zones)
+
+    active_zones = sum(z.status == "Active" for z in zones)
+
+    inactive_zones = total_zones - active_zones
+
+    understaffed_zones = sum(z.mower_count < 2 for z in zones)
+
+    coverage = 0
+
+    if total_zones > 0:
+
+        coverage = round((active_zones / total_zones) * 100)
 
     return {
 
-        "total_zones": len(zones),
+        "total_zones": total_zones,
 
-        "total_mowers": sum(z.mower_count for z in zones),
+        "total_mowers": total_mowers,
 
-        "active_zones": sum(z.status == "Active" for z in zones),
+        "active_zones": active_zones,
 
-        "inactive_zones": sum(z.status != "Active" for z in zones),
+        "inactive_zones": inactive_zones,
 
-        "understaffed_zones": sum(z.mower_count < 2 for z in zones)
-    }    
+        "understaffed_zones": understaffed_zones,
+
+        "coverage": coverage,
+
+    }
