@@ -35,6 +35,10 @@ def property_zones(property_id):
 
     for zone in zones:
         acres = calculate_acreage(zone.geometry)
+
+        recommended = recommended_mowers(zone.geometry)
+
+
         print("ZONE:", zone.id)
         print("ACRES:", acres)
 
@@ -53,6 +57,10 @@ def property_zones(property_id):
 
             "geometry":zone.geometry,
              "acreage": calculate_acreage(zone.geometry),
+
+             "recommended_mowers": recommended,
+
+            "understaffed": is_understaffed(zone),
 
             
         })
@@ -115,6 +123,11 @@ def get(zone_id):
         "geometry":zone.geometry,
 
          "acreage": calculate_acreage(zone.geometry),
+         "recommended_mowers": 
+         
+         recommended_mowers(zone.geometry),
+
+        "understaffed": is_understaffed(zone),
 
     })
 

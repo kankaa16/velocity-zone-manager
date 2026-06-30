@@ -85,25 +85,23 @@ export default function ZoneList({
 
     const filteredZones = useMemo(() => {
 
-        return zones.filter((zone) =>
+    const query = (search ?? "").toLowerCase();
 
-            zone.name
+    return zones.filter((zone) =>
 
-                .toLowerCase()
+        zone.name
+            .toLowerCase()
+            .includes(query)
 
-                .includes(search.toLowerCase())
+        ||
 
-            ||
+        zone.zone_type
+            .toLowerCase()
+            .includes(query)
 
-            zone.zone_type
+    );
 
-                .toLowerCase()
-
-                .includes(search.toLowerCase())
-
-        );
-
-    }, [zones, search]);
+}, [zones, search]);
 
     if (!property) {
 

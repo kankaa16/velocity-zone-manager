@@ -347,39 +347,77 @@ export default function ZoneInspector({
 
                 </div>
 
-                {
+                <div
+    className={`rounded-xl border p-4 ${
+        zone.understaffed
+            ? "border-orange-300 bg-orange-50"
+            : "border-green-300 bg-green-50"
+    }`}
+>
 
-                    zone.understaffed && (
+    <p
+        className={`font-semibold ${
+            zone.understaffed
+                ? "text-orange-700"
+                : "text-green-700"
+        }`}
+    >
+        {zone.understaffed
+            ? "⚠ Fleet Recommendation"
+            : "✓ Fleet Status"}
+    </p>
 
-                        <div className="rounded-xl border border-orange-300 bg-orange-50 p-4 flex gap-3">
+    <div className="mt-3 space-y-1 text-sm">
 
-                            <TriangleAlert
+        <p>
+            Assigned:
+            <span className="ml-2 font-semibold">
+                {mowers}
+            </span>
+        </p>
 
-                                className="text-orange-600"
+        <p>
+            Recommended:
+            <span className="ml-2 font-semibold">
+                {zone.recommended_mowers}
+            </span>
+        </p>
 
-                            />
+        {
+            zone.understaffed ? (
 
-                            <div>
+                <p className="font-medium text-orange-700">
 
-                                <p className="font-semibold text-orange-700">
+                    Needs{" "}
+                    {
+                        zone.recommended_mowers -
+                        mowers
+                    }{" "}
+                    more mower
+                    {
+                        zone.recommended_mowers -
+                        mowers >
+                        1
+                            ? "s"
+                            : ""
+                    }
 
-                                    Understaffed
+                </p>
 
-                                </p>
+            ) : (
 
-                                <p className="text-sm text-orange-600">
+                <p className="font-medium text-green-700">
 
-                                    Additional mower recommended.
+                    Fleet allocation is optimal.
 
-                                </p>
+                </p>
 
-                            </div>
+            )
+        }
 
-                        </div>
+    </div>
 
-                    )
-
-                }
+</div>
 
             </div>
 

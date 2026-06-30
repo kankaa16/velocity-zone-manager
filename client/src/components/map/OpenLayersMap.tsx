@@ -44,6 +44,10 @@ import api from "../../api/axios";
 
 import MapToolbar from "./MapToolbar";
 import ZoneModal from "../zones/ZoneModal";
+import SummaryCards from "../dashboard/SummaryCards";
+
+import type { Geometry } from "geojson";
+
 
 import "ol/ol.css";
 
@@ -91,15 +95,102 @@ export default function OpenLayersMap({
 
     );
 
+    const zoneStyles = {
+
+    Fairway: new Style({
+
+        fill: new Fill({
+            color: "rgba(34,197,94,.25)"
+        }),
+
+        stroke: new Stroke({
+            color: "#15803d",
+            width: 3,
+        }),
+
+    }),
+
+    Rough: new Style({
+
+        fill: new Fill({
+            color: "rgba(249,115,22,.22)"
+        }),
+
+        stroke: new Stroke({
+            color: "#ea580c",
+            width: 3,
+        }),
+
+    }),
+
+    Perimeter: new Style({
+
+        fill: new Fill({
+            color: "rgba(37,99,235,.20)"
+        }),
+
+        stroke: new Stroke({
+            color: "#2563eb",
+            width: 3,
+        }),
+
+    }),
+
+    Exclusion: new Style({
+
+        fill: new Fill({
+            color: "rgba(239,68,68,.18)"
+        }),
+
+        stroke: new Stroke({
+            color: "#dc2626",
+            width: 3,
+        }),
+
+    }),
+
+    Default: new Style({
+
+        fill: new Fill({
+            color: "rgba(107,114,128,.18)"
+        }),
+
+        stroke: new Stroke({
+            color: "#6b7280",
+            width: 3,
+        }),
+
+    }),
+
+};
+
     const layer = useRef(
 
-        new VectorLayer({
+    new VectorLayer({
 
-            source: source.current,
+        source: source.current,
 
-        })
+        style: (feature) => {
 
-    );
+            const type = feature.get("zone_type");
+
+            return (
+
+                zoneStyles[
+                    type as keyof typeof zoneStyles
+                ]
+
+                ||
+
+                zoneStyles.Default
+
+            );
+
+        },
+
+    })
+
+);
 
     const draw = useRef<Draw | null>(null);
 
@@ -107,7 +198,8 @@ export default function OpenLayersMap({
 
     const select = useRef<Select | null>(null);
 
-    const [geometry, setGeometry] = useState<any>(null);
+    const [geometry, setGeometry] =
+    useState<Geometry | null>(null);
 
     const [showModal, setShowModal] =
 
@@ -148,22 +240,44 @@ export default function OpenLayersMap({
         }),
 
     });
+        useEffect(() => {
 
-    layer.current.setStyle(
+    layer.current.setStyle((feature) => {
 
-        (feature) => {
+        const baseStyle =
+            zoneStyles[
+                feature.get("zone_type") as keyof typeof zoneStyles
+            ] || zoneStyles.Default;
 
-            const id = feature.get("id");
-
-            return id === selectedZone?.id
-
-                ? selectedStyle
-
-                : zoneStyle;
-
+        if (feature.get("id") === selectedZone?.id) {
+            return selectedStyle;
         }
 
+        return baseStyle;
+
+    });
+
+    if (!selectedZone) return;
+
+    const feature = source.current
+        .getFeatures()
+        .find(
+            (f) => f.get("id") === selectedZone.id
+        );
+
+    if (!feature) return;
+
+    map.current?.getView().fit(
+        feature.getGeometry()!.getExtent(),
+        {
+            duration: 500,
+            padding: [100, 100, 100, 100],
+            maxZoom: 15,
+        }
     );
+
+}, [selectedZone]);
+        
         useEffect(() => {
 
         if (!mapDiv.current) return;
@@ -248,7 +362,10 @@ const features = format.readFeatures(
                     
                     acreage: zone.acreage,
 
+                    recommended_mowers: zone.recommended_mowers,
+
                     understaffed: zone.understaffed,
+
 
                 }
 
@@ -354,24 +471,23 @@ if (
 
                 }
 
-                setSelectedZone({
+                const format = new GeoJSON();
 
+const geojson = format.writeFeatureObject(feature, {
+    featureProjection: "EPSG:3857",
+    dataProjection: "EPSG:4326",
+});
+
+setSelectedZone({
     id: feature.get("id"),
-
     name: feature.get("name"),
-
     zone_type: feature.get("zone_type"),
-
     mower_count: feature.get("mower_count"),
-
     status: feature.get("status"),
-
     acreage: feature.get("acreage"),
-
+    recommended_mowers: feature.get("recommended_mowers"),
     understaffed: feature.get("understaffed"),
-
-    geometry: feature.getGeometry(),
-
+    geometry: geojson.geometry,
 });
 
             }
@@ -384,7 +500,7 @@ if (
 
         );
 
-    }, [selectedZone]);
+    }, []);
 
         useEffect(() => {
 
@@ -576,27 +692,23 @@ if (
             try {
 
                 await api.put(
+    `/zones/${feature.get("id")}`,
+    {
+        name: feature.get("name"),
+        zone_type: feature.get("zone_type"),
+        mower_count: feature.get("mower_count"),
+        status: feature.get("status"),
+        geometry: geojson.geometry,
+    }
+);
 
-                    `/zones/${feature.get("id")}`,
+await loadZones();
 
-                    {
+const res = await api.get(
+    `/zones/${feature.get("id")}`
+);
 
-                        name: feature.get("name"),
-
-                        zone_type: feature.get("zone_type"),
-
-                        mower_count: feature.get("mower_count"),
-
-                        status: feature.get("status"),
-
-                        geometry: geojson.geometry,
-
-                    }
-
-                );
-
-                console.log("Zone updated.");
-                await loadZones();
+setSelectedZone(res.data.data);
 
             }
 
@@ -770,6 +882,10 @@ if (
                 className="w-full h-full"
 
             />
+
+            <SummaryCards
+        propertyId={property?.id ?? null}
+        />
 
             <MapToolbar
 

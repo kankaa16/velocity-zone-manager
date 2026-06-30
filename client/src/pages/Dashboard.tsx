@@ -17,6 +17,8 @@ export default function Dashboard() {
 
     const [drawMode, setDrawMode] =
         useState(false);
+    
+    const [search, setSearch] = useState("");    
 
     return (
         <div className="h-screen flex flex-col bg-[#f7f7f3]">
@@ -25,6 +27,8 @@ export default function Dashboard() {
                 drawMode={drawMode}
                 setDrawMode={setDrawMode}
                 property={selectedProperty}
+                search={search}
+                setSearch={setSearch}
             />
 
             <div className="flex flex-1 overflow-hidden">
@@ -34,6 +38,8 @@ export default function Dashboard() {
                     onPropertyChange={setSelectedProperty}
                     selectedZone={selectedZone}
                     onZoneSelect={setSelectedZone}
+                    search={search}
+
                 />
 
                 <div className="flex-1 relative">

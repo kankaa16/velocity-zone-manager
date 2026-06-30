@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import type { Property } from "../../types/property";
 
 interface Props {
-
     property: Property | null;
 
     drawMode: boolean;
@@ -20,6 +19,11 @@ interface Props {
         React.SetStateAction<boolean>
     >;
 
+    search: string;
+
+    setSearch: React.Dispatch<
+        React.SetStateAction<string>
+    >;
 }
 
 export default function Navbar({
@@ -29,6 +33,10 @@ export default function Navbar({
     drawMode,
 
     setDrawMode,
+
+    search,
+
+    setSearch
 
 }: Props) {
 
@@ -76,9 +84,11 @@ export default function Navbar({
             />
 
             <input
-                placeholder="Search zones, properties..."
-                className="w-full h-11 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none"
-            />
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    placeholder="Search zones or type..."
+    className="w-full h-11 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none"
+/>
 
         </div>
 

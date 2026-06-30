@@ -1,6 +1,7 @@
 from app.extensions import db
 from app.models.zone import Zone
 from shapely.geometry import shape
+import math
 
 
 def get_property_zones(property_id):
@@ -143,31 +144,56 @@ def property_summary(property_id):
 
     "total_mowers": total_mowers,
 
+    "recommended_mowers": sum(
+        recommended_mowers(z.geometry)
+        for z in zones
+    ),
+
     "active_zones": active_zones,
 
     "inactive_zones": inactive_zones,
 
-    "understaffed_zones": understaffed_zones,
+    "understaffed_zones": sum(
+        is_understaffed(z)
+        for z in zones
+    ),
 
     "coverage": coverage,
 
 }
+from shapely.geometry import shape
 
 def calculate_acreage(geometry):
-
-    print("GEOMETRY =", geometry)
 
     if not geometry:
         return 0
 
-    polygon = shape(geometry)
+    if geometry.get("type") is None:
+        return 0
 
-    print("AREA =", polygon.area)
+    try:
+        polygon = shape(geometry)
 
-    area_m2 = polygon.area * 111320 * 111320
+        area_m2 = polygon.area * 111320 * 111320
 
-    acres = area_m2 / 4046.85642
+        return round(area_m2 / 4046.85642, 2)
 
-    print("ACRES =", acres)
+    except Exception as e:
+        print("Invalid geometry:", geometry)
+        print(e)
+        return 0
+    
+def is_understaffed(zone):
 
-    return round(acres,2)
+    acreage = calculate_acreage(zone.geometry)
+
+    required = max(1, round(acreage / 25))
+
+    return zone.mower_count < required    
+
+
+def recommended_mowers(geometry):
+
+    acreage = calculate_acreage(geometry)
+
+    return max(1, math.ceil(acreage / 25))

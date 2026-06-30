@@ -1,6 +1,5 @@
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-
 import PropertyDropdown from "../property/PropertyDropdown";
 import ZoneList from "../zones/ZoneList";
 
@@ -8,7 +7,6 @@ import type { Property } from "../../types/property";
 import type { Zone } from "../../types/zone";
 
 interface Props {
-
     property: Property | null;
 
     onPropertyChange: (property: Property) => void;
@@ -17,6 +15,7 @@ interface Props {
 
     onZoneSelect: (zone: Zone) => void;
 
+    search: string;
 }
 
 export default function Sidebar({
@@ -29,9 +28,10 @@ export default function Sidebar({
 
     onZoneSelect,
 
-}: Props) {
+    search,
 
-    const [search, setSearch] = useState("");
+}: Props){
+
 
     const title = useMemo(
 
@@ -61,37 +61,6 @@ export default function Sidebar({
 
             {/* Search */}
 
-            <div className="p-5">
-
-                <div className="relative">
-
-                    <Search
-
-                        size={18}
-
-                        className="absolute left-4 top-3.5 text-gray-400"
-
-                    />
-
-                    <input
-
-                        value={search}
-
-                        onChange={(e) =>
-
-                            setSearch(e.target.value)
-
-                        }
-
-                        placeholder="Search zones..."
-
-                        className="w-full rounded-xl border bg-gray-50 pl-11 pr-4 py-3 outline-none"
-
-                    />
-
-                </div>
-
-            </div>
 
             {/* Title */}
 

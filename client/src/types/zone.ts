@@ -1,19 +1,22 @@
+import type { Geometry } from "geojson";
+
 export interface Zone {
 
-    id:number;
+    id: number;
 
-    name:string;
+    name: string;
 
-    zone_type:string;
+    zone_type: string;
 
-    mower_count:number;
+    mower_count: number;
 
-    status:string;
+    status: string;
 
-    geometry:any;
+    geometry: Geometry;
 
-    acreage?:number;
+    acreage: number;
 
-    understaffed?:boolean;
+    recommended_mowers: number;
 
+    understaffed: boolean;
 }
