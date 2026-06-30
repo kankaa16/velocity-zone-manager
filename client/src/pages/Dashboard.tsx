@@ -9,15 +9,22 @@ import ZoneList from "../components/ZoneList";
 import type { Property } from "../types/property";
 
 export default function Dashboard() {
-
+    const [drawMode, setDrawMode] = useState(false);
     const [selectedProperty, setSelectedProperty] =
         useState<Property | null>(null);
 console.log(selectedProperty);
+
     return (
 
         <div className="h-screen bg-[#F7F8F3] flex flex-col overflow-hidden">
 
-            <Navbar />
+        <Navbar
+
+    drawMode={drawMode}
+
+    setDrawMode={setDrawMode}
+
+/>
 
             <div className="flex flex-1 overflow-hidden">
 
@@ -32,7 +39,13 @@ console.log(selectedProperty);
                 <main className="flex-1 flex flex-col">
 
                     <div className="flex-1 relative">
-    <MapView property={selectedProperty} />
+    <MapView
+
+    property={selectedProperty}
+
+    drawMode={drawMode}
+
+/>
 </div>
 
 <div className="h-[320px] grid grid-cols-[360px_1fr] border-t">

@@ -1,7 +1,22 @@
 import { Bell, LogOut, MapPinned, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar() {
+interface NavbarProps {
+
+    drawMode: boolean;
+
+    setDrawMode: React.Dispatch<React.SetStateAction<boolean>>;
+
+}
+
+
+export default function Navbar({
+
+    drawMode,
+
+    setDrawMode,
+
+}: NavbarProps) {
 
     const navigate = useNavigate();
 
@@ -12,6 +27,7 @@ export default function Navbar() {
         navigate("/");
 
     }
+    
 
     return (
 
@@ -72,7 +88,16 @@ export default function Navbar() {
                     <span className="absolute right-3 top-3 h-3 w-3 rounded-full bg-green-500" />
 
                 </button>
+                <button
 
+    onClick={() => setDrawMode(v => !v)}
+
+>
+
+    {drawMode ? "Stop Drawing" : "Draw Zone"}
+
+</button>
+                
                 <button
 
                     onClick={logout}

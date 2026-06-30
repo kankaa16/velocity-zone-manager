@@ -5,6 +5,7 @@ import View from "ol/View";
 
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import Draw from "ol/interaction/Draw";
 
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
@@ -23,20 +24,53 @@ import api from "../api/axios";
 import "ol/ol.css";
 
 interface Props {
-
     property: Property | null;
 
+    drawMode: boolean;
 }
 
 export default function MapView({
 
     property,
+    drawMode,
 
 }: Props) {
 
     const mapDiv = useRef<HTMLDivElement | null>(null);
 
     const map = useRef<Map | null>(null);
+        const drawInteraction = useRef<Draw | null>(null);
+
+
+    useEffect(() => {
+
+    if (!map.current) return;
+
+    if (drawInteraction.current) {
+
+        map.current.removeInteraction(
+            drawInteraction.current
+        );
+
+        drawInteraction.current = null;
+
+    }
+
+    if (!drawMode) return;
+
+    drawInteraction.current = new Draw({
+
+        source: source.current,
+
+        type: "Polygon",
+
+    });
+
+    map.current.addInteraction(
+        drawInteraction.current
+    );
+
+}, [drawMode]);
 
     const source = useRef(
 
