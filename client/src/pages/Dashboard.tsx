@@ -1,71 +1,60 @@
 import { useState } from "react";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import MapView from "../components/MapView";
-import SummaryCards from "../components/SummaryCards";
-import ZoneList from "../components/ZoneList";
+import Navbar from "../components/layout/Navbar";
+import Sidebar from "../components/layout/Sidebar";
+import OpenLayersMap from "../components/map/OpenLayersMap";
+import ZoneInspector from "../components/zones/ZoneInspector";
 
 import type { Property } from "../types/property";
+import type { Zone } from "../types/zone";
 
 export default function Dashboard() {
-    const [drawMode, setDrawMode] = useState(false);
     const [selectedProperty, setSelectedProperty] =
         useState<Property | null>(null);
-console.log(selectedProperty);
+
+    const [selectedZone, setSelectedZone] =
+        useState<Zone | null>(null);
+
+    const [drawMode, setDrawMode] =
+        useState(false);
 
     return (
+        <div className="h-screen flex flex-col bg-[#f7f7f3]">
 
-        <div className="h-screen bg-[#F7F8F3] flex flex-col overflow-hidden">
-
-        <Navbar
-
-    drawMode={drawMode}
-
-    setDrawMode={setDrawMode}
-
-/>
+            <Navbar
+                drawMode={drawMode}
+                setDrawMode={setDrawMode}
+                property={selectedProperty}
+            />
 
             <div className="flex flex-1 overflow-hidden">
 
                 <Sidebar
-
-                    selectedProperty={selectedProperty}
-
-                    onSelect={setSelectedProperty}
-
+                    property={selectedProperty}
+                    onPropertyChange={setSelectedProperty}
+                    selectedZone={selectedZone}
+                    onZoneSelect={setSelectedZone}
                 />
 
-                <main className="flex-1 flex flex-col">
+                <div className="flex-1 relative">
 
-                    <div className="flex-1 relative">
-    <MapView
-
+                    <OpenLayersMap
     property={selectedProperty}
-
+    selectedZone={selectedZone}
+    setSelectedZone={setSelectedZone}
     drawMode={drawMode}
-
+    setDrawMode={setDrawMode}
 />
-</div>
 
-<div className="h-[320px] grid grid-cols-[360px_1fr] border-t">
+                </div>
 
-    <div className="overflow-y-auto border-r bg-[#F7F8F3]">
-        <ZoneList property={selectedProperty} />
-    </div>
-
-    <div className="overflow-y-auto">
-        <SummaryCards property={selectedProperty} />
-    </div>
-
-</div>
-
-                </main>
+                <ZoneInspector
+                    property={selectedProperty}
+                    zone={selectedZone}
+                />
 
             </div>
 
         </div>
-
     );
-
 }

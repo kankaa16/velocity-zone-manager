@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models.zone import Zone
+from shapely.geometry import shape
 
 
 def get_property_zones(property_id):
@@ -115,6 +116,11 @@ def property_summary(property_id):
 
     total_zones = len(zones)
 
+    total_acreage = sum(
+    calculate_acreage(z.geometry)
+    for z in zones
+)
+
     total_mowers = sum(z.mower_count for z in zones)
 
     active_zones = sum(z.status == "Active" for z in zones)
@@ -131,16 +137,37 @@ def property_summary(property_id):
 
     return {
 
-        "total_zones": total_zones,
+    "total_zones": total_zones,
 
-        "total_mowers": total_mowers,
+    "total_acreage": round(total_acreage, 2),
 
-        "active_zones": active_zones,
+    "total_mowers": total_mowers,
 
-        "inactive_zones": inactive_zones,
+    "active_zones": active_zones,
 
-        "understaffed_zones": understaffed_zones,
+    "inactive_zones": inactive_zones,
 
-        "coverage": coverage,
+    "understaffed_zones": understaffed_zones,
 
-    }
+    "coverage": coverage,
+
+}
+
+def calculate_acreage(geometry):
+
+    print("GEOMETRY =", geometry)
+
+    if not geometry:
+        return 0
+
+    polygon = shape(geometry)
+
+    print("AREA =", polygon.area)
+
+    area_m2 = polygon.area * 111320 * 111320
+
+    acres = area_m2 / 4046.85642
+
+    print("ACRES =", acres)
+
+    return round(acres,2)

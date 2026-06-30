@@ -17,6 +17,8 @@ zone_bp=Blueprint("zone", __name__)
 
 @zone_bp.get("/properties/<int:property_id>/zones")
 @jwt_required()
+
+
 def property_zones(property_id):
 
     property=db.session.get(Property, property_id)
@@ -28,7 +30,14 @@ def property_zones(property_id):
 
     data=[]
 
+    print(">>> PROPERTY_ZONES CALLED")
+
+
     for zone in zones:
+        acres = calculate_acreage(zone.geometry)
+        print("ZONE:", zone.id)
+        print("ACRES:", acres)
+
 
         data.append({
 
@@ -42,7 +51,10 @@ def property_zones(property_id):
 
             "status":zone.status,
 
-            "geometry":zone.geometry
+            "geometry":zone.geometry,
+             "acreage": calculate_acreage(zone.geometry),
+
+            
         })
 
     return success(data=data)
@@ -100,7 +112,10 @@ def get(zone_id):
 
         "status":zone.status,
 
-        "geometry":zone.geometry
+        "geometry":zone.geometry,
+
+         "acreage": calculate_acreage(zone.geometry),
+
     })
 
 
@@ -139,18 +154,22 @@ def delete(zone_id):
 @jwt_required()
 def import_zones(property_id):
 
-    property=db.session.get(Property, property_id)
+    print("IMPORT HIT")
+
+    property = db.session.get(Property, property_id)
 
     if not property:
         return error("Property not found.", 404)
 
-    body=request.get_json()
+    body = request.get_json()
 
-    count=import_geojson(property_id, body)
+    print(body)
 
-    return success(
-        f"{count} zones imported."
-    )
+    count = import_geojson(property_id, body)
+
+    print(count)
+
+    return success(f"{count} zones imported.")
 
 @zone_bp.get("/properties/<int:property_id>/zones/export")
 @jwt_required()

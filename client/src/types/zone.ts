@@ -1,26 +1,19 @@
-export interface Geometry {
-    type: string;
-    coordinates: number[][][];
-}
-
 export interface Zone {
-    id: number;
-    property_id: number;
-    name: string;
-    zone_type: string;
-    mower_count: number;
-    status: string;
-    geometry: Geometry;
-}
 
-export interface PropertySummary {
+    id:number;
 
-    total_zones: number;
+    name:string;
 
-    total_mowers: number;
+    zone_type:string;
 
-    active_zones: number;
+    mower_count:number;
 
-    coverage: number;
+    status:string;
+
+    geometry:any;
+
+    acreage?:number;
+
+    understaffed?:boolean;
 
 }
