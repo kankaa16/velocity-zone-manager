@@ -10,6 +10,8 @@ from app.services.zone_service import (
 )
 from app.services.zone_service import *
 
+from app.utils.geojson_validator import validate_geojson
+
 from app.utils.response import success, error
 
 zone_bp=Blueprint("zone", __name__)
@@ -27,6 +29,8 @@ def property_zones(property_id):
         return error("Property not found.",404)
 
     zones=get_property_zones(property_id)
+
+    
 
     data=[]
 
@@ -61,8 +65,7 @@ def property_zones(property_id):
              "recommended_mowers": recommended,
 
             "understaffed": is_understaffed(zone),
-
-            
+    
         })
 
     return success(data=data)
@@ -167,8 +170,6 @@ def delete(zone_id):
 @jwt_required()
 def import_zones(property_id):
 
-    print("IMPORT HIT")
-
     property = db.session.get(Property, property_id)
 
     if not property:
@@ -176,11 +177,12 @@ def import_zones(property_id):
 
     body = request.get_json()
 
-    print(body)
+    validation_error = validate_geojson(body)
+
+    if validation_error:
+        return error(validation_error, 400)
 
     count = import_geojson(property_id, body)
-
-    print(count)
 
     return success(f"{count} zones imported.")
 

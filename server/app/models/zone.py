@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from sqlalchemy.dialects.postgresql import JSONB
+
 from app.extensions import db
 
 
@@ -26,10 +28,10 @@ class Zone(db.Model):
         default="Active",
     )
 
-    geometry=db.Column(
-        db.JSON,
-        nullable=False,
-    )
+    geometry = db.Column(
+    JSONB,
+    nullable=False,
+)
 
     created_at=db.Column(
         db.DateTime,

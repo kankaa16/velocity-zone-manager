@@ -1,6 +1,7 @@
 from app.extensions import db
 from app.models.zone import Zone
 from shapely.geometry import shape
+from sqlalchemy import text
 import math
 
 
@@ -62,6 +63,9 @@ def import_geojson(property_id, geojson):
         props=feature.get("properties", {})
 
         geometry=feature.get("geometry")
+
+        if geometry is None:
+            continue
 
         zone=Zone(
             property_id=property_id,
@@ -197,3 +201,5 @@ def recommended_mowers(geometry):
     acreage = calculate_acreage(geometry)
 
     return max(1, math.ceil(acreage / 25))
+
+

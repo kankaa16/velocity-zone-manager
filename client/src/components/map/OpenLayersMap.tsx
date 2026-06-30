@@ -12,6 +12,8 @@ import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 
+
+
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
 
@@ -27,6 +29,7 @@ import { defaults } from "ol/control";
 
 import { fromLonLat } from "ol/proj";
 
+
 import {
 
     Fill,
@@ -35,7 +38,7 @@ import {
 
 } from "ol/style";
 
-import type { Feature } from "ol";
+import Feature from "ol/Feature";
 
 import type { Property } from "../../types/property";
 import type { Zone } from "../../types/zone";
@@ -45,6 +48,9 @@ import api from "../../api/axios";
 import MapToolbar from "./MapToolbar";
 import ZoneModal from "../zones/ZoneModal";
 import SummaryCards from "../dashboard/SummaryCards";
+
+import Polygon from "ol/geom/Polygon";
+import { generateMowingPath } from "../../utils/generateMowingPath";
 
 import type { Geometry } from "geojson";
 
@@ -172,24 +178,51 @@ export default function OpenLayersMap({
 
         style: (feature) => {
 
-            const type = feature.get("zone_type");
+    if (feature.get("has_conflict")) {
+        return new Style({
+            fill: new Fill({
+                color: "rgba(239,68,68,.35)"
+            }),
+            stroke: new Stroke({
+                color: "#dc2626",
+                width: 5,
+            }),
+        });
+    }
 
-            return (
+    const type = feature.get("zone_type") as keyof typeof zoneStyles;
 
-                zoneStyles[
-                    type as keyof typeof zoneStyles
-                ]
+    return zoneStyles[type] ?? zoneStyles.Default;
 
-                ||
-
-                zoneStyles.Default
-
-            );
-
-        },
+}
 
     })
 
+);
+
+const mowingSource = useRef(
+    new VectorSource()
+);
+
+const mowingLayer = useRef(
+    new VectorLayer({
+        source: mowingSource.current,
+        style: new Style({
+
+    stroke: new Stroke({
+
+        color: "orange",
+
+        width: 4,
+
+        lineCap: "round",
+
+        lineJoin: "round",
+
+    }),
+
+})
+    })
 );
 
     const draw = useRef<Draw | null>(null);
@@ -290,17 +323,13 @@ export default function OpenLayersMap({
 
             controls: defaults(),
 
-            layers: [
-
-                new TileLayer({
-
-                    source: new OSM(),
-
-                }),
-
-                layer.current,
-
-            ],
+             layers: [
+    new TileLayer({
+        source: new OSM(),
+    }),
+    layer.current,
+    mowingLayer.current, 
+],
 
             view: new View({
 
@@ -365,6 +394,8 @@ const features = format.readFeatures(
                     recommended_mowers: zone.recommended_mowers,
 
                     understaffed: zone.understaffed,
+
+                    has_conflict: zone.has_conflict,
 
 
                 }
@@ -470,6 +501,19 @@ if (
                     return;
 
                 }
+             
+
+const polygon = feature.getGeometry() as Polygon;
+
+const lineString = generateMowingPath(polygon);
+
+mowingSource.current.clear();
+
+mowingSource.current.addFeature(
+    new Feature({
+        geometry: lineString,
+    })
+);
 
                 const format = new GeoJSON();
 

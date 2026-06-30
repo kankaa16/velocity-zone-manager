@@ -4,6 +4,9 @@ from app.config import Config
 from app.extensions import db, jwt, cors, swagger
 
 
+
+
+
 def create_app():
 
     app=Flask(__name__)

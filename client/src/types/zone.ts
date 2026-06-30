@@ -19,4 +19,9 @@ export interface Zone {
     recommended_mowers: number;
 
     understaffed: boolean;
+
+    has_conflict?: boolean;
+
+    conflicts_with?: number[];
+
 }
