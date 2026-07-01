@@ -2,7 +2,7 @@
 
 A full-stack GIS application for managing autonomous mower zones across large commercial properties. The platform allows operators to manage properties, draw mowing zones, assign mower fleets, import/export GeoJSON, and monitor zone coverage through an interactive map.
 
-Built as part of the **Ottermap × TerraSync AI-Augmented Builder Internship (Round 2)**.
+Built as part of the **Ottermap × TerraSync AI-Augmented Builder **.
 
 ---
 
