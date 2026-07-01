@@ -1,5 +1,4 @@
 import {
-    Bell,
     LogOut,
     Search,
     MapPinned,
@@ -54,7 +53,6 @@ export default function Navbar({
 
         <header className="h-16 border-b bg-white px-6 flex items-center justify-between">
 
-    {/* LEFT */}
     <div className="flex items-center gap-4 shrink-0">
 
         <div className="h-10 w-10 rounded-xl bg-green-700 flex items-center justify-center">
@@ -73,7 +71,6 @@ export default function Navbar({
 
     </div>
 
-    {/* CENTER */}
     <div className="flex-1 flex justify-center px-8">
 
         <div className="relative w-full max-w-xl">
@@ -94,7 +91,7 @@ export default function Navbar({
 
     </div>
 
-    {/* RIGHT */}
+ 
     <div className="flex items-center gap-3 shrink-0">
 
         {property && (
@@ -113,10 +110,7 @@ export default function Navbar({
 
         )}
 
-        <button className="relative h-11 w-11 rounded-xl border flex items-center justify-center">
-            <Bell size={20}/>
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-green-500"/>
-        </button>
+       
 
         <button
             onClick={() => setDrawMode(!drawMode)}

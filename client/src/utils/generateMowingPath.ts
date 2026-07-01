@@ -80,7 +80,7 @@ export function generateMowingPath(
     previousEnd,
     start,
     spacing * 0.45,
-    60
+    1000
 );
         }
 

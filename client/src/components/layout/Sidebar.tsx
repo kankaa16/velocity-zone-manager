@@ -59,10 +59,7 @@ export default function Sidebar({
 
             </div>
 
-            {/* Search */}
-
-
-            {/* Title */}
+            
 
             <div className="px-5 pb-3 flex items-center justify-between">
 
@@ -84,7 +81,7 @@ export default function Sidebar({
 
             </div>
 
-            {/* Zone List */}
+
 
             <div className="flex-1 overflow-y-auto">
 

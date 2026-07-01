@@ -142,12 +142,17 @@ export default function ZoneInspector({
         );
 
     }
+    const recommended = zone.recommended_mowers;
+
+    const understaffed = mowers < recommended;
+
+    const deficit = Math.max(0, recommended - mowers);
 
     return (
 
         <aside className="w-[340px] border-l bg-white flex flex-col">
 
-            {/* Header */}
+            
 
             <div className="p-6 border-b">
 
@@ -165,7 +170,7 @@ export default function ZoneInspector({
 
             </div>
 
-            {/* Body */}
+            
 
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
@@ -285,7 +290,7 @@ export default function ZoneInspector({
 
                 </div>
 
-                {/* Stats */}
+                
 
                 <div className="grid grid-cols-2 gap-3">
 
@@ -349,7 +354,7 @@ export default function ZoneInspector({
 
                 <div
     className={`rounded-xl border p-4 ${
-        zone.understaffed
+        understaffed
             ? "border-orange-300 bg-orange-50"
             : "border-green-300 bg-green-50"
     }`}
@@ -357,12 +362,12 @@ export default function ZoneInspector({
 
     <p
         className={`font-semibold ${
-            zone.understaffed
+            understaffed
                 ? "text-orange-700"
                 : "text-green-700"
         }`}
     >
-        {zone.understaffed
+        {understaffed
             ? "⚠ Fleet Recommendation"
             : "✓ Fleet Status"}
     </p>
@@ -379,23 +384,23 @@ export default function ZoneInspector({
         <p>
             Recommended:
             <span className="ml-2 font-semibold">
-                {zone.recommended_mowers}
+                {recommended}
             </span>
         </p>
 
         {
-            zone.understaffed ? (
+            understaffed ? (
 
                 <p className="font-medium text-orange-700">
 
                     Needs{" "}
                     {
-                        zone.recommended_mowers -
+                        recommended -
                         mowers
                     }{" "}
                     more mower
                     {
-                        zone.recommended_mowers -
+                        recommended -
                         mowers >
                         1
                             ? "s"
@@ -421,7 +426,7 @@ export default function ZoneInspector({
 
             </div>
 
-            {/* Footer */}
+         
 
             <div className="border-t p-5 flex gap-3">
 

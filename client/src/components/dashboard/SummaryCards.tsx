@@ -42,7 +42,7 @@ export default function SummaryCards({
         async function loadSummary() {
             try {
                 const res = await api.get(
-                    `/properties/${propertyId}/summary`
+                    `/properties/${propertyId}/zones/summary`
                 );
 
                 setSummary(res.data.data);

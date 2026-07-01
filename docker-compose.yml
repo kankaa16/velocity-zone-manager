@@ -1,10 +1,11 @@
 services:
+
   postgres:
     image: postgres:16
 
     container_name: velocity_postgres
 
-    restart: always
+    restart: unless-stopped
 
     environment:
       POSTGRES_USER: postgres
@@ -16,6 +17,62 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d velocity_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build:
+      context: ./server
+
+    container_name: velocity_server
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: velocity_db
+
+      SECRET_KEY: your-secret-key
+      JWT_SECRET_KEY: your-jwt-secret-key
+
+    ports:
+      - "5001:5000"
+
+    volumes:
+      - ./server:/app
+
+    command: >
+      sh -c "
+      python seed.py &&
+      python app.py
+      "
+
+  client:
+    build:
+      context: ./client
+
+    container_name: velocity_client
+
+    depends_on:
+      - server
+
+    ports:
+      - "5174:5173"
+
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+    command: npm run dev -- --host
 
 volumes:
   postgres_data:

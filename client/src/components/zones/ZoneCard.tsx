@@ -28,7 +28,7 @@ export default function ZoneCard({
 
     const active = zone.status === "Active";
 
-    // Placeholder until backend summary is ready
+
     const acreage = (zone as any).acreage ?? "--";
 
     const understaffed =
@@ -65,8 +65,6 @@ export default function ZoneCard({
             `}
 
         >
-
-            {/* Title */}
 
             <div className="flex items-start justify-between">
 

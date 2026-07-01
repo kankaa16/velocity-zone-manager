@@ -91,6 +91,11 @@ def create(property_id):
 
     if not all(body.get(x) is not None for x in required):
         return error("Missing required fields.")
+    
+    message=validate_zone_data(body)
+
+    if message:
+        return error(message, 400)
 
     zone=create_zone(property_id,body)
 
@@ -146,6 +151,11 @@ def update(zone_id):
 
     body=request.get_json()
 
+    message=validate_zone_data(body)
+
+    if message:
+        return error(message, 400)
+
     update_zone(zone,body)
 
     return success("Zone updated.")
@@ -199,7 +209,7 @@ def export(property_id):
         data=export_geojson(property_id)
     )
 
-@zone_bp.get("/properties/<int:property_id>/summary")
+@zone_bp.get("/properties/<int:property_id>/zones/summary")
 def summary(property_id):
 
     property=db.session.get(Property, property_id)

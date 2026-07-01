@@ -13,6 +13,15 @@ def get_zone(zone_id):
     return db.session.get(Zone, zone_id)
 
 
+def validate_zone_data(data):
+
+    if data["mower_count"] < 1:
+        return "A zone must have at least one assigned mower."
+
+    return None
+
+
+
 def create_zone(property_id, data):
 
     zone = Zone(
@@ -189,17 +198,13 @@ def calculate_acreage(geometry):
     
 def is_understaffed(zone):
 
-    acreage = calculate_acreage(zone.geometry)
+    acreage=calculate_acreage(zone.geometry)
 
-    required = max(1, round(acreage / 25))
-
-    return zone.mower_count < required    
+    return acreage>(zone.mower_count*2) 
 
 
 def recommended_mowers(geometry):
 
-    acreage = calculate_acreage(geometry)
+    acreage=calculate_acreage(geometry)
 
-    return max(1, math.ceil(acreage / 25))
-
-
+    return max(1, math.ceil(acreage/2))

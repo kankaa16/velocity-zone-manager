@@ -4,10 +4,10 @@ from flask_cors import CORS
 from flasgger import Swagger
 
 
-db = SQLAlchemy()
+db=SQLAlchemy()
 
-jwt = JWTManager()
+jwt=JWTManager()
 
-cors = CORS()
+cors=CORS()
 
-swagger = Swagger()
+swagger=Swagger()
