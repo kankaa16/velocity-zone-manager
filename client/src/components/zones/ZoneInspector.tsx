@@ -37,6 +37,8 @@ export default function ZoneInspector({
 
     const [mowers, setMowers] = useState(1);
 
+    
+
     useEffect(() => {
 
         if (!zone) return;
